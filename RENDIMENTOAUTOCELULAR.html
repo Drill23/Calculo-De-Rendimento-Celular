@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Rendimento de Frango</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #007aff;
+      --success-color: #34c759;
+      --danger-color: #ff3b30;
+      --background-color: #f2f2f7;
+      --card-color: #ffffff;
+      --text-color: #1c1c1e;
+      --border-radius: 15px;
+      --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      padding: 16px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .card {
+      background-color: var(--card-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d1d6;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--border-radius);
+      background-color: var(--primary-color);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #0062cc;
+    }
+    .menu-container {
+      margin-bottom: 16px;
+    }
+    .menu-button {
+      background-color: var(--card-color);
+      border-radius: var(--border-radius);
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .menu-icon {
+      background-color: var(--primary-color);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 16px;
+    }
+    .menu-button h2 {
+      font-size: 18px;
+      flex-grow: 1;
+    }
+    .menu-items {
+      display: none;
+      background-color: var(--card-color);
+      border-radius: var(--border-radius);
+      margin-top: 10px;
+      padding: 10px;
+      box-shadow: var(--shadow);
+    }
+    .menu-item {
+      padding: 14px;
+      border-bottom: 1px solid #e5e5ea;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+    .menu-item:hover {
+      background-color: #f9f9f9;
+    }
+    .menu-item i {
+      color: var(--primary-color);
+      margin-right: 12px;
+      font-size: 20px;
+    }
+    .result-card {
+      display: none;
+      margin-top: 24px;
+      animation: fadeIn 0.5s;
+    }
+    .result-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .result-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 16px;
+      font-size: 24px;
+    }
+    .success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    .danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    .result-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .result-details {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .highlight {
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .tab-container {
+      display: flex;
+      margin-bottom: 20px;
+      background-color: #e5e5ea;
+      border-radius: var(--border-radius);
+      padding: 4px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      border-radius: calc(var(--border-radius) - 4px);
+    }
+    .tab.active {
+      background-color: var(--card-color);
+      box-shadow: var(--shadow);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Calculadora de Rendimento</h1>
+    <p>Controle de cortes e miúdos de frango</p>
+  </div>
+
+  <div class="tab-container">
+    <div class="tab active" data-tab="daily">Rendimento Diário</div>
+    <div class="tab" data-tab="weekly">Rendimento Semanal</div>
+  </div>
+
+  <!-- Aba Diário -->
+  <div id="daily-content" class="tab-content active">
+    <div class="card">
+      <div class="form-group">
+        <label>Data:</label>
+        <input type="date" id="date-daily" value="">
+      </div>
+      <div class="form-group">
+        <label>Toneladas Abatidas:</label>
+        <input type="number" id="tons-daily" step="0.01" placeholder="Digite a quantidade em toneladas">
+      </div>
+    </div>
+
+    <!-- Botão para exibir/ocultar o campo de porcentagens em massa -->
+    <button class="btn" id="toggle-mass-input" style="margin-bottom:16px;" onclick="toggleMassInput()">Inserir Porcentagens em Massa</button>
+
+    <!-- Card de inserção em massa (oculto por padrão) -->
+    <div class="card" id="mass-input-card" style="display:none;">
+      <div class="form-group">
+        <label>Inserir Porcentagens em Massa:</label>
+        <textarea id="bulkPercentages" rows="3" placeholder="Cole as 11 porcentagens na ordem:
+1. Coxa+Sobrecoxa
+2. Filé
+3. Coxinha da Asa
+4. Meio da Asa
+5. Ponta da Asa
+6. Fígado
+7. Moela
+8. Coração
+9. Pés
+10. CMS
+11. Dorso" style="width:100%;"></textarea>
+      </div>
+      <button class="btn" onclick="processarMassPercentages()">Inserir</button>
+    </div>
+
+    <div class="menu-container">
+      <div class="menu-button" id="menu-button-daily">
+        <div class="menu-icon">
+          <i class="fas fa-drumstick-bite"></i>
+        </div>
+        <h2>Selecionar Item</h2>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="menu-items" id="menu-items-daily">
+        <div class="menu-item" data-item="coxa">
+          <i class="fas fa-drumstick-bite"></i>
+          <span>Coxa e Sobrecoxa</span>
+        </div>
+        <div class="menu-item" data-item="file">
+          <i class="fas fa-bacon"></i>
+          <span>Filé</span>
+        </div>
+        <div class="menu-item" data-item="coxinha">
+          <i class="fas fa-drumstick-bite"></i>
+          <span>Coxinha da Asa</span>
+        </div>
+        <div class="menu-item" data-item="meio">
+          <i class="fas fa-wing"></i>
+          <span>Meio da Asa</span>
+        </div>
+        <div class="menu-item" data-item="ponta">
+          <i class="fas fa-feather-alt"></i>
+          <span>Ponta da Asa</span>
+        </div>
+        <div class="menu-item" data-item="asa-total">
+          <i class="fas fa-feather"></i>
+          <span>Asa Total</span>
+        </div>
+        <div class="menu-item" data-item="figado">
+          <i class="fas fa-apple-alt"></i>
+          <span>Fígado</span>
+        </div>
+        <div class="menu-item" data-item="moela">
+          <i class="fas fa-dot-circle"></i>
+          <span>Moela</span>
+        </div>
+        <div class="menu-item" data-item="coracao">
+          <i class="fas fa-heart"></i>
+          <span>Coração</span>
+        </div>
+        <div class="menu-item" data-item="pes">
+          <i class="fas fa-shoe-prints"></i>
+          <span>Pés</span>
+        </div>
+        <div class="menu-item" data-item="cms">
+          <i class="fas fa-mortar-pestle"></i>
+          <span>CMS</span>
+        </div>
+        <div class="menu-item" data-item="dorso">
+          <i class="fas fa-box"></i>
+          <span>Dorso</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="item-form-daily" class="card" style="display: none;">
+      <div id="figado-type-container" class="form-group" style="display: none;">
+        <label>Tipo de Fígado:</label>
+        <select id="figado-type">
+          <option value="pacote">Pacote (15kg)</option>
+          <option value="barra">Barra (20kg)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label id="item-label-daily">Porcentagem Realizada:</label>
+        <input type="number" id="percentage-daily" step="0.001" placeholder="Digite a porcentagem realizada">
+      </div>
+      <button id="calculate-daily" class="btn">Calcular Rendimento</button>
+    </div>
+
+    <div id="result-daily" class="result-card card">
+      <div class="result-header">
+        <div class="result-icon" id="result-icon-daily">
+          <i class="fas fa-check"></i>
+        </div>
+        <h3 class="result-title" id="result-title-daily">Resultado</h3>
+      </div>
+      <div class="result-details" id="result-details-daily">
+        Os resultados do cálculo aparecerão aqui.
+      </div>
+      <button id="new-item-daily" class="btn" style="margin-top:16px;">Calcular Novo Item</button>
+    </div>
+  </div>
+
+  <!-- Aba Semanal -->
+  <div id="weekly-content" class="tab-content">
+    <div class="card">
+      <div class="form-group">
+        <label>Semana:</label>
+        <input type="week" id="week">
+      </div>
+      <div class="form-group">
+        <label>Toneladas Acumuladas na Semana:</label>
+        <input type="number" id="tons-weekly" step="0.01" placeholder="Digite a quantidade em toneladas">
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <div class="menu-button" id="menu-button-weekly">
+        <div class="menu-icon">
+          <i class="fas fa-drumstick-bite"></i>
+        </div>
+        <h2>Selecionar Item</h2>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="menu-items" id="menu-items-weekly">
+        <div class="menu-item" data-item="coxa">
+          <i class="fas fa-drumstick-bite"></i>
+          <span>Coxa e Sobrecoxa</span>
+        </div>
+        <div class="menu-item" data-item="file">
+          <i class="fas fa-bacon"></i>
+          <span>Filé</span>
+        </div>
+        <div class="menu-item" data-item="coxinha">
+          <i class="fas fa-drumstick-bite"></i>
+          <span>Coxinha da Asa</span>
+        </div>
+        <div class="menu-item" data-item="meio">
+          <i class="fas fa-wing"></i>
+          <span>Meio da Asa</span>
+        </div>
+        <div class="menu-item" data-item="ponta">
+          <i class="fas fa-feather-alt"></i>
+          <span>Ponta da Asa</span>
+        </div>
+        <div class="menu-item" data-item="asa-total">
+          <i class="fas fa-feather"></i>
+          <span>Asa Total</span>
+        </div>
+        <div class="menu-item" data-item="figado">
+          <i class="fas fa-apple-alt"></i>
+          <span>Fígado</span>
+        </div>
+        <div class="menu-item" data-item="moela">
+          <i class="fas fa-dot-circle"></i>
+          <span>Moela</span>
+        </div>
+        <div class="menu-item" data-item="coracao">
+          <i class="fas fa-heart"></i>
+          <span>Coração</span>
+        </div>
+        <div class="menu-item" data-item="pes">
+          <i class="fas fa-shoe-prints"></i>
+          <span>Pés</span>
+        </div>
+        <div class="menu-item" data-item="cms">
+          <i class="fas fa-mortar-pestle"></i>
+          <span>CMS</span>
+        </div>
+        <div class="menu-item" data-item="dorso">
+          <i class="fas fa-box"></i>
+          <span>Dorso</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="item-form-weekly" class="card" style="display: none;">
+      <div id="figado-type-container-weekly" class="form-group" style="display: none;">
+        <label>Tipo de Fígado:</label>
+        <select id="figado-type-weekly">
+          <option value="pacote">Pacote (15kg)</option>
+          <option value="barra">Barra (20kg)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label id="item-label-weekly">Porcentagem Realizada:</label>
+        <input type="number" id="percentage-weekly" step="0.001" placeholder="Digite a porcentagem realizada">
+      </div>
+      <button id="calculate-weekly" class="btn">Calcular Rendimento Semanal</button>
+    </div>
+
+    <div id="result-weekly" class="result-card card">
+      <div class="result-header">
+        <div class="result-icon" id="result-icon-weekly">
+          <i class="fas fa-check"></i>
+        </div>
+        <h3 class="result-title" id="result-title-weekly">Resultado Semanal</h3>
+      </div>
+      <div class="result-details" id="result-details-weekly">
+        Os resultados do cálculo semanal aparecerão aqui.
+      </div>
+      <button id="new-item-weekly" class="btn" style="margin-top:16px;">Calcular Novo Item</button>
+    </div>
+  </div>
+
+  <script>
+    // ---------------------- CONFIGURAÇÕES INTERNAS ----------------------
+    const config = {
+      metas: {
+        'coxa': 26.500,
+        'file': 26.500,
+        'coxinha': 4.600,
+        'meio': 2.800,
+        'ponta': 0.930,
+        // A meta "asa-total" pode ser calculada internamente, mas usaremos as partes separadas
+        'figado': 1.600,
+        'moela': 1.100,
+        'coracao': 0.480,
+        'pes': 2.850,
+        'cms': 15.000,
+        'dorso': 16.020
+      },
+      pesos: {
+        'coxa': 20,
+        'file': 20,
+        'coxinha': 20,
+        'meio': 20,
+        'ponta': 20,
+        'figado': { 'pacote': 15, 'barra': 20 },
+        'moela': 20,
+        'coracao': 20,
+        'pes': 16,
+        'cms': 20,
+        'dorso': 20
+      }
+    };
+
+    // Mapeamento dos itens para os nomes exibidos
+    const itemLabels = {
+      'coxa': 'Coxa e Sobrecoxa',
+      'file': 'Filé',
+      'coxinha': 'Coxinha da Asa',
+      'meio': 'Meio da Asa',
+      'ponta': 'Ponta da Asa',
+      'asa-total': 'Asa Total',
+      'figado': 'Fígado',
+      'moela': 'Moela',
+      'coracao': 'Coração',
+      'pes': 'Pés',
+      'cms': 'CMS',
+      'dorso': 'Dorso'
+    };
+
+    // ---------------------- VARIÁVEIS GLOBAIS ----------------------
+    let selectedItemDaily = '';
+    let selectedItemWeekly = '';
+    let massValues = {};  // Armazena os valores inseridos em massa
+    // Define data atual no campo "Data:" (aba Diário)
+    document.getElementById('date-daily').valueAsDate = new Date();
+
+    // ---------------------- FUNÇÕES DE TABS E MENUS ----------------------
+    function toggleMenu(menuButtonId, menuItemsId) {
+      const menuItems = document.getElementById(menuItemsId);
+      menuItems.style.display = (menuItems.style.display === 'block') ? 'none' : 'block';
+    }
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+      document.getElementById(`${tabId}-content`).classList.add('active');
+    }
+    function selectItem(item, type) {
+      if (type === 'daily') {
+        selectedItemDaily = item;
+        // Se houver valor em massa para este item, preenche o input
+        if (massValues[item] !== undefined) {
+          document.getElementById('percentage-daily').value = massValues[item];
+        } else {
+          document.getElementById('percentage-daily').value = "";
+        }
+        document.getElementById('item-label-daily').textContent = `Porcentagem Realizada (${config.metas[item] !== undefined ? config.metas[item].toFixed(3) : "?"} % meta):`;
+        document.getElementById('item-form-daily').style.display = 'block';
+        document.getElementById('figado-type-container').style.display = item === 'figado' ? 'block' : 'none';
+        document.getElementById('menu-items-daily').style.display = 'none';
+      } else {
+        selectedItemWeekly = item;
+        if (massValues[item] !== undefined) {
+          document.getElementById('percentage-weekly').value = massValues[item];
+        } else {
+          document.getElementById('percentage-weekly').value = "";
+        }
+        document.getElementById('item-label-weekly').textContent = `Porcentagem Realizada (${config.metas[item] !== undefined ? config.metas[item].toFixed(3) : "?"} % meta):`;
+        document.getElementById('item-form-weekly').style.display = 'block';
+        document.getElementById('figado-type-container-weekly').style.display = item === 'figado' ? 'block' : 'none';
+        document.getElementById('menu-items-weekly').style.display = 'none';
+      }
+    }
+
+    // ---------------------- MASS INPUT (PORCENTAGENS EM MASSA) ----------------------
+    function toggleMassInput() {
+      const card = document.getElementById('mass-input-card');
+      if (card.style.display === 'none' || card.style.display === '') {
+        card.style.display = 'block';
+        document.getElementById('toggle-mass-input').textContent = "Ocultar Porcentagens em Massa";
+      } else {
+        card.style.display = 'none';
+        document.getElementById('toggle-mass-input').textContent = "Inserir Porcentagens em Massa";
+      }
+    }
+    function processarMassPercentages() {
+      let bulkValue = document.getElementById('bulkPercentages').value;
+      if (!bulkValue) {
+        alert("Por favor, insira as porcentagens em massa.");
+        return;
+      }
+      // Tenta extrair números que estejam antes de "%" (se existirem)
+      let matches = bulkValue.match(/[\d.,]+(?=%)/g);
+      // Se não encontrar, tenta separar por espaços ou quebras de linha
+      if (!matches || matches.length < 11) {
+        matches = bulkValue.split(/\s+/).filter(item => item.length > 0);
+        if (matches.length < 11) {
+          alert("Número insuficiente de porcentagens detectadas. Certifique-se de incluir 11 valores na ordem correta.");
+          return;
+        }
+      }
+      if (matches.length > 11) {
+        matches = matches.slice(0, 11);
+      }
+      // Ordem desejada: coxa, file, coxinha, meio, ponta, figado, moela, coracao, pes, cms, dorso
+      const keys = ["coxa", "file", "coxinha", "meio", "ponta", "figado", "moela", "coracao", "pes", "cms", "dorso"];
+      for (let i = 0; i < keys.length; i++) {
+        let valueStr = matches[i].replace(",", ".");
+        let valueNum = parseFloat(valueStr);
+        massValues[keys[i]] = valueNum;
+      }
+      alert("Porcentagens inseridas com sucesso.");
+    }
+
+    // ---------------------- FUNÇÕES DE CÁLCULO ----------------------
+    function computeResult(selectedItem, tons, percentage, figadoType) {
+      const metaItem = config.metas[selectedItem];
+      const diferenca = percentage - metaItem;
+      const diferencaKg = (diferenca * tons * 10);
+      let pesoCaixa;
+      if (selectedItem === 'figado') {
+        pesoCaixa = config.pesos[selectedItem][figadoType];
+      } else {
+        pesoCaixa = config.pesos[selectedItem];
+      }
+      const caixas = diferencaKg / pesoCaixa;
+      const caixasArredondadas = diferenca > 0 ? Math.ceil(caixas) : Math.floor(caixas);
+      let resultTitle, message;
+      if (diferenca >= 0) {
+        resultTitle = 'Meta Atingida!';
+        message = `<p>No item <span class="highlight">${itemLabels[selectedItem]}</span>, você superou a meta de <span class="highlight">${metaItem.toFixed(3)}%</span> com um rendimento de <span class="highlight">${percentage.toFixed(3)}%</span>.</p>`;
+        message += `<p>Isso representa <span class="highlight">+${Math.abs(diferencaKg).toFixed(2)} kg</span> acima da meta.</p>`;
+        message += `<p>Equivalente a aproximadamente <span class="highlight">${Math.abs(caixasArredondadas)}</span> caixas a mais.</p>`;
+        if (Math.abs(caixas) !== Math.abs(caixasArredondadas)) {
+          message += `<p><i class="fas fa-info-circle"></i> O valor de caixas foi arredondado de ${Math.abs(caixas).toFixed(2)} para ${Math.abs(caixasArredondadas)}.</p>`;
+        }
+      } else {
+        resultTitle = 'Meta Não Atingida';
+        message = `<p>No item <span class="highlight">${itemLabels[selectedItem]}</span>, você não atingiu a meta de <span class="highlight">${metaItem.toFixed(3)}%</span> com um rendimento de <span class="highlight">${percentage.toFixed(3)}%</span>.</p>`;
+        message += `<p>Isso representa <span class="highlight">${diferencaKg.toFixed(2)} kg</span> abaixo da meta.</p>`;
+        message += `<p>Equivalente a aproximadamente <span class="highlight">${Math.abs(caixasArredondadas)}</span> caixas a menos.</p>`;
+        if (Math.abs(caixas) !== Math.abs(caixasArredondadas)) {
+          message += `<p><i class="fas fa-info-circle"></i> O valor de caixas foi arredondado de ${Math.abs(caixas).toFixed(2)} para ${Math.abs(caixasArredondadas)}.</p>`;
+        }
+      }
+      return { resultTitle, resultDetails: message };
+    }
+    function calculateRendimento(type) {
+      const isDaily = type === 'daily';
+      const selectedItem = isDaily ? selectedItemDaily : selectedItemWeekly;
+      const tons = parseFloat(document.getElementById(isDaily ? 'tons-daily' : 'tons-weekly').value);
+      const percentage = parseFloat(document.getElementById(isDaily ? 'percentage-daily' : 'percentage-weekly').value);
+      let figadoType = null;
+      if (selectedItem === 'figado') {
+        figadoType = document.getElementById(isDaily ? 'figado-type' : 'figado-type-weekly').value;
+      }
+      if (!selectedItem || isNaN(tons) || isNaN(percentage)) {
+        alert('Por favor, preencha todos os campos corretamente.');
+        return;
+      }
+      const result = computeResult(selectedItem, tons, percentage, figadoType);
+      const resultIcon = document.getElementById(isDaily ? 'result-icon-daily' : 'result-icon-weekly');
+      const resultTitleElem = document.getElementById(isDaily ? 'result-title-daily' : 'result-title-weekly');
+      const resultDetailsElem = document.getElementById(isDaily ? 'result-details-daily' : 'result-details-weekly');
+      const resultCard = document.getElementById(isDaily ? 'result-daily' : 'result-weekly');
+      resultCard.style.display = 'block';
+      if ((percentage - config.metas[selectedItem]) >= 0) {
+        resultIcon.className = 'result-icon success';
+        resultIcon.innerHTML = '<i class="fas fa-check"></i>';
+      } else {
+        resultIcon.className = 'result-icon danger';
+        resultIcon.innerHTML = '<i class="fas fa-times"></i>';
+      }
+      resultTitleElem.textContent = result.resultTitle;
+      resultDetailsElem.innerHTML = result.resultDetails;
+    }
+
+    // ---------------------- EVENTOS "CALCULAR NOVO ITEM" ----------------------
+    // Aqui removemos a linha que limpa o campo de toneladas para que continue persistente.
+    document.getElementById('new-item-daily').addEventListener('click', function() {
+      document.getElementById('item-form-daily').style.display = 'none';
+      document.getElementById('percentage-daily').value = '';
+      // Mantém o valor de 'tons-daily'
+      selectedItemDaily = '';
+      document.getElementById('result-daily').style.display = 'none';
+      window.scrollTo(0, 0);
+    });
+    document.getElementById('new-item-weekly').addEventListener('click', function() {
+      document.getElementById('item-form-weekly').style.display = 'none';
+      document.getElementById('percentage-weekly').value = '';
+      // Mantém o valor de 'tons-weekly'
+      selectedItemWeekly = '';
+      document.getElementById('result-weekly').style.display = 'none';
+      window.scrollTo(0, 0);
+    });
+
+    // ---------------------- EVENTOS PARA MENUS E ABAS ----------------------
+    document.getElementById('menu-button-daily').addEventListener('click', () => toggleMenu('menu-button-daily', 'menu-items-daily'));
+    document.getElementById('menu-button-weekly').addEventListener('click', () => toggleMenu('menu-button-weekly', 'menu-items-weekly'));
+    document.querySelectorAll('#menu-items-daily .menu-item').forEach(item => {
+      item.addEventListener('click', () => selectItem(item.getAttribute('data-item'), 'daily'));
+    });
+    document.querySelectorAll('#menu-items-weekly .menu-item').forEach(item => {
+      item.addEventListener('click', () => selectItem(item.getAttribute('data-item'), 'weekly'));
+    });
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+    });
+    document.getElementById('calculate-daily').addEventListener('click', () => calculateRendimento('daily'));
+    document.getElementById('calculate-weekly').addEventListener('click', () => calculateRendimento('weekly'));
+  </script>
+</body>
+</html>
